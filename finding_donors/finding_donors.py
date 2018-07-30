@@ -1,34 +1,58 @@
-
 # coding: utf-8
 
 # # Machine Learning Engineer Nanodegree
 # ## Supervised Learning
 # ## Project: Finding Donors for *CharityML*
 
-# Welcome to the second project of the Machine Learning Engineer Nanodegree! In this notebook, some template code has already been provided for you, and it will be your job to implement the additional functionality necessary to successfully complete this project. Sections that begin with **'Implementation'** in the header indicate that the following block of code will require additional functionality which you must provide. Instructions will be provided for each section and the specifics of the implementation are marked in the code block with a `'TODO'` statement. Please be sure to read the instructions carefully!
+# Welcome to the second project of the Machine Learning Engineer Nanodegree! In this notebook, some template code has
+# already been provided for you, and it will be your job to implement the additional functionality necessary to
+# successfully complete this project. Sections that begin with **'Implementation'** in the header indicate that the
+# following block of code will require additional functionality which you must provide. Instructions will be provided
+# for each section and the specifics of the implementation are marked in the code block with a `'TODO'` statement.
+# Please be sure to read the instructions carefully!
 # 
-# In addition to implementing code, there will be questions that you must answer which relate to the project and your implementation. Each section where you will answer a question is preceded by a **'Question X'** header. Carefully read each question and provide thorough answers in the following text boxes that begin with **'Answer:'**. Your project submission will be evaluated based on your answers to each of the questions and the implementation you provide.  
+# In addition to implementing code, there will be questions that you must answer which relate to the project and your
+# implementation. Each section where you will answer a question is preceded by a **'Question X'** header. Carefully read
+# each question and provide thorough answers in the following text boxes that begin with **'Answer:'**. Your project
+# submission will be evaluated based on your answers to each of the questions and the implementation you provide.
 # 
-# >**Note:** Please specify WHICH VERSION OF PYTHON you are using when submitting this notebook. Code and Markdown cells can be executed using the **Shift + Enter** keyboard shortcut. In addition, Markdown cells can be edited by typically double-clicking the cell to enter edit mode.
+# >**Note:** Please specify WHICH VERSION OF PYTHON you are using when submitting this notebook. Code and Markdown cells
+# can be executed using the **Shift + Enter** keyboard shortcut. In addition, Markdown cells can be edited by typically
+# double-clicking the cell to enter edit mode.
 
 # ## Getting Started
 # 
-# In this project, you will employ several supervised algorithms of your choice to accurately model individuals' income using data collected from the 1994 U.S. Census. You will then choose the best candidate algorithm from preliminary results and further optimize this algorithm to best model the data. Your goal with this implementation is to construct a model that accurately predicts whether an individual makes more than $50,000. This sort of task can arise in a non-profit setting, where organizations survive on donations.  Understanding an individual's income can help a non-profit better understand how large of a donation to request, or whether or not they should reach out to begin with.  While it can be difficult to determine an individual's general income bracket directly from public sources, we can (as we will see) infer this value from other publically available features. 
+# In this project, you will employ several supervised algorithms of your choice to accurately model individuals' income
+# using data collected from the 1994 U.S. Census. You will then choose the best candidate algorithm from preliminary
+# results and further optimize this algorithm to best model the data. Your goal with this implementation is to construct
+# a model that accurately predicts whether an individual makes more than $50,000. This sort of task can arise in a
+# non-profit setting, where organizations survive on donations.  Understanding an individual's income can help a
+# non-profit better understand how large of a donation to request, or whether or not they should reach out to begin
+# with. While it can be difficult to determine an individual's general income bracket directly from public sources, we
+# can (as we will see) infer this value from other publically available features.
 # 
-# The dataset for this project originates from the [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/Census+Income). The datset was donated by Ron Kohavi and Barry Becker, after being published in the article _"Scaling Up the Accuracy of Naive-Bayes Classifiers: A Decision-Tree Hybrid"_. You can find the article by Ron Kohavi [online](https://www.aaai.org/Papers/KDD/1996/KDD96-033.pdf). The data we investigate here consists of small changes to the original dataset, such as removing the `'fnlwgt'` feature and records with missing or ill-formatted entries.
+# The dataset for this project originates from the
+# [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/Census+Income). The datset was donated by
+# Ron Kohavi and Barry Becker, after being published in the article _"Scaling Up the Accuracy of Naive-Bayes
+# Classifiers: A Decision-Tree Hybrid"_. You can find the article by Ron Kohavi
+# [online](https://www.aaai.org/Papers/KDD/1996/KDD96-033.pdf). The data we investigate here consists of small changes
+# to the original dataset, such as removing the `'fnlwgt'` feature and records with missing or ill-formatted entries.
 
 # ----
 # ## Exploring the Data
-# Run the code cell below to load necessary Python libraries and load the census data. Note that the last column from this dataset, `'income'`, will be our target label (whether an individual makes more than, or at most, $50,000 annually). All other columns are features about each individual in the census database.
+# Run the code cell below to load necessary Python libraries and load the census data. Note that the last column from
+# this dataset, `'income'`, will be our target label (whether an individual makes more than, or at most, $50,000
+# annually). All other columns are features about each individual in the census database.
 
 # In[1]:
 
 
+from time import time
+
 # Import libraries necessary for this project
 import numpy as np
 import pandas as pd
-from time import time
-from IPython.display import display # Allows the use of display() for DataFrames
+from IPython.display import display  # Allows the use of display() for DataFrames
 
 # Import supplementary visualization code visuals.py
 import visuals as vs
@@ -42,9 +66,10 @@ data = pd.read_csv("census.csv")
 # Success - Display the first record
 display(data.head(n=1))
 
-
 # ### Implementation: Data Exploration
-# A cursory investigation of the dataset will determine how many individuals fit into either group, and will tell us about the percentage of these individuals making more than \$50,000. In the code cell below, you will need to compute the following:
+# A cursory investigation of the dataset will determine how many individuals fit into either group, and will tell us
+# about the percentage of these individuals making more than \$50,000. In the code cell below, you will need to compute
+# the following:
 # - The total number of records, `'n_records'`
 # - The number of individuals making more than \$50,000 annually, `'n_greater_50k'`.
 # - The number of individuals making at most \$50,000 annually, `'n_at_most_50k'`.
@@ -72,7 +97,6 @@ print("Total number of records: {}".format(n_records))
 print("Individuals making more than $50,000: {}".format(n_greater_50k))
 print("Individuals making at most $50,000: {}".format(n_at_most_50k))
 print("Percentage of individuals making more than $50,000: {:.2f}%".format(greater_percent))
-
 
 # ** Featureset Exploration **
 # 
@@ -104,11 +128,10 @@ print("Percentage of individuals making more than $50,000: {:.2f}%".format(great
 
 # Split the data into features and target label
 income_raw = data['income']
-features_raw = data.drop('income', axis = 1)
+features_raw = data.drop('income', axis=1)
 
 # Visualize skewed continuous features of original data
 vs.distribution(data)
-
 
 # For highly-skewed feature distributions such as `'capital-gain'` and `'capital-loss'`, it is common practice to apply a <a href="https://en.wikipedia.org/wiki/Data_transformation_(statistics)">logarithmic transformation</a> on the data so that the very large and very small values do not negatively affect the performance of a learning algorithm. Using a logarithmic transformation significantly reduces the range of values caused by outliers. Care must be taken when applying this transformation however: The logarithm of `0` is undefined, so we must translate the values by a small amount above `0` to apply the the logarithm successfully.
 # 
@@ -119,12 +142,11 @@ vs.distribution(data)
 
 # Log-transform the skewed features
 skewed = ['capital-gain', 'capital-loss']
-features_log_transformed = pd.DataFrame(data = features_raw)
+features_log_transformed = pd.DataFrame(data=features_raw)
 features_log_transformed[skewed] = features_raw[skewed].apply(lambda x: np.log(x + 1))
 
 # Visualize the new log distributions
-vs.distribution(features_log_transformed, transformed = True)
-
+vs.distribution(features_log_transformed, transformed=True)
 
 # ### Normalizing Numerical Features
 # In addition to performing transformations on features that are highly skewed, it is often good practice to perform some type of scaling on numerical features. Applying a scaling to the data does not change the shape of each feature's distribution (such as `'capital-gain'` or `'capital-loss'` above); however, normalization ensures that each feature is treated equally when applying supervised learners. Note that once scaling is applied, observing the data in its raw form will no longer have the same original meaning, as exampled below.
@@ -138,15 +160,14 @@ vs.distribution(features_log_transformed, transformed = True)
 from sklearn.preprocessing import MinMaxScaler
 
 # Initialize a scaler, then apply it to the features
-scaler = MinMaxScaler() # default=(0, 1)
+scaler = MinMaxScaler()  # default=(0, 1)
 numerical = ['age', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
 
-features_log_minmax_transform = pd.DataFrame(data = features_log_transformed)
+features_log_minmax_transform = pd.DataFrame(data=features_log_transformed)
 features_log_minmax_transform[numerical] = scaler.fit_transform(features_log_transformed[numerical])
 
 # Show an example of a record with scaling applied
-display(features_log_minmax_transform.head(n = 5))
-
+display(features_log_minmax_transform.head(n=5))
 
 # ### Implementation: Data Preprocessing
 # 
@@ -170,7 +191,7 @@ display(features_log_minmax_transform.head(n = 5))
 features_final = pd.get_dummies(features_log_minmax_transform)
 
 # TODO: Encode the 'income_raw' data to numerical values
-income = income_raw.replace({'<=50K':0, '>50K':1})
+income = income_raw.replace({'<=50K': 0, '>50K': 1})
 
 # Print the number of features after one-hot encoding
 encoded = list(features_final.columns)
@@ -192,15 +213,14 @@ print("{} total features after one-hot encoding.".format(len(encoded)))
 from sklearn.model_selection import train_test_split
 
 # Split the 'features' and 'income' data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(features_final, 
-                                                    income, 
-                                                    test_size = 0.2, 
-                                                    random_state = 0)
+X_train, X_test, y_train, y_test = train_test_split(features_final,
+                                                    income,
+                                                    test_size=0.2,
+                                                    random_state=0)
 
 # Show the results of the split
 print("Training set has {} samples.".format(X_train.shape[0]))
 print("Testing set has {} samples.".format(X_test.shape[0]))
-
 
 # ----
 # ## Evaluating Model Performance
@@ -253,23 +273,22 @@ FP = income.count() - TP # Specific to the naive case
 TN = 0 # No predicted negatives in the naive case
 FN = 0 # No predicted negatives in the naive case
 '''
-TP = np.sum(income) 
-FP = income.count() - TP 
+TP = np.sum(income)
+FP = income.count() - TP
 
-TN = 0 
-FN = 0 
+TN = 0
+FN = 0
 # TODO: Calculate accuracy, precision and recall
-accuracy = TP/(TP+FP)
-recall = TP/(TP+FN)
-precision = TP/(TP+FP)
+accuracy = TP / (TP + FP)
+recall = TP / (TP + FN)
+precision = TP / (TP + FP)
 
 # TODO: Calculate F-score using the formula above for beta = 0.5 and correct values for precision and recall.
 beta = 0.5
-fscore = (1+beta**2) * (precision*recall) / (beta**2*precision+recall)
+fscore = (1 + beta ** 2) * (precision * recall) / (beta ** 2 * precision + recall)
 
 # Print the results 
 print("Naive Predictor: [Accuracy score: {:.4f}, F-score: {:.4f}]".format(accuracy, fscore))
-
 
 # ###  Supervised Learning Models
 # **The following are some of the supervised learning models that are currently available in** [`scikit-learn`](http://scikit-learn.org/stable/supervised_learning.html) **that you may choose from:**
@@ -312,7 +331,8 @@ print("Naive Predictor: [Accuracy score: {:.4f}, F-score: {:.4f}]".format(accura
 # TODO: Import two metrics from sklearn - fbeta_score and accuracy_score
 from sklearn.metrics import fbeta_score, accuracy_score
 
-def train_predict(learner, sample_size, X_train, y_train, X_test, y_test): 
+
+def train_predict(learner, sample_size, X_train, y_train, X_test, y_test):
     '''
     inputs:
        - learner: the learning algorithm to be trained and predicted on
@@ -322,42 +342,42 @@ def train_predict(learner, sample_size, X_train, y_train, X_test, y_test):
        - X_test: features testing set
        - y_test: income testing set
     '''
-    
+
     results = {}
-    
+
     # TODO: Fit the learner to the training data using slicing with 'sample_size' using .fit(training_features[:], training_labels[:])
-    start = time() # Get start time
+    start = time()  # Get start time
     learner = learner.fit(X_train, y_train)
-    end = time() # Get end time
-    
+    end = time()  # Get end time
+
     # TODO: Calculate the training time
     results['train_time'] = end - start
-        
+
     # TODO: Get the predictions on the test set(X_test),
     #       then get predictions on the first 300 training samples(X_train) using .predict()
-    start = time() # Get start time
+    start = time()  # Get start time
     predictions_test = learner.predict(X_test)
     predictions_train = learner.predict(X_train[:sample_size])
-    end = time() # Get end time
-    
+    end = time()  # Get end time
+
     # TODO: Calculate the total prediction time
-    results['pred_time'] = end - start 
-            
+    results['pred_time'] = end - start
+
     # TODO: Compute accuracy on the first 300 training samples which is y_train[:300]
     results['acc_train'] = accuracy_score(predictions_train, y_train[:sample_size])
-        
+
     # TODO: Compute accuracy on test set using accuracy_score()
     results['acc_test'] = accuracy_score(predictions_test, y_test)
-    
+
     # TODO: Compute F-score on the the first 300 training samples using fbeta_score()
     results['f_train'] = fbeta_score(y_train[:sample_size], predictions_train, beta=0.5)
-        
+
     # TODO: Compute F-score on the test set which is y_test
     results['f_test'] = fbeta_score(y_test, predictions_test, beta=0.5)
-       
+
     # Success
     print("{} trained on {} samples.".format(learner.__class__.__name__, sample_size))
-        
+
     # Return the results
     return results
 
@@ -373,11 +393,11 @@ def train_predict(learner, sample_size, X_train, y_train, X_test, y_test):
 # 
 # **Note:** Depending on which algorithms you chose, the following implementation may take some time to run!
 
-# In[ ]:
+# In[15]:
 
 
 # TODO: Import the three supervised learning models from sklearn
-from sklearn.svm import  SVC
+from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import AdaBoostClassifier
 
@@ -391,8 +411,8 @@ clf_C = SVC()
 # HINT: samples_10 is 10% of samples_100 (ensure to set the count of the values to be `int` and not `float`)
 # HINT: samples_1 is 1% of samples_100 (ensure to set the count of the values to be `int` and not `float`)
 samples_100 = len(y_train)
-samples_10 = np.int(np.round(samples_100 * 0.1,0))
-samples_1 = np.int(np.round(samples_100 * 0.01,0))
+samples_10 = np.int(np.round(samples_100 * 0.1, 0))
+samples_1 = np.int(np.round(samples_100 * 0.01, 0))
 
 # Collect results on the learners
 results = {}
@@ -400,11 +420,10 @@ for clf in [clf_A, clf_B, clf_C]:
     clf_name = clf.__class__.__name__
     results[clf_name] = {}
     for i, samples in enumerate([samples_1, samples_10, samples_100]):
-        results[clf_name][i] =         train_predict(clf, samples, X_train, y_train, X_test, y_test)
+        results[clf_name][i] = train_predict(clf, samples, X_train, y_train, X_test, y_test)
 
 # Run metrics visualization for the three supervised learning models chosen
 vs.evaluate(results, accuracy, fscore)
-
 
 # ----
 # ## Improving Results
@@ -446,26 +465,28 @@ vs.evaluate(results, accuracy, fscore)
 # 
 # **Note:** Depending on the algorithm chosen and the parameter list, the following implementation may take some time to run!
 
-# In[ ]:
+# In[22]:
 
 
 # TODO: Import 'GridSearchCV', 'make_scorer', and any other necessary libraries
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import make_scorer
 
 # TODO: Initialize the classifier
-clf = None
+clf = AdaBoostClassifier()
 
 # TODO: Create the parameters list you wish to tune, using a dictionary if needed.
 # HINT: parameters = {'parameter_1': [value1, value2], 'parameter_2': [value1, value2]}
-parameters = None
+parameters = {'n_estimators': [30, 40, 50, 60, 70, 80, 100, 150], 'learning_rate': [0.5, 1, 2, 3, 5, 7, 10]}
 
 # TODO: Make an fbeta_score scoring object using make_scorer()
-scorer = None
+scorer = make_scorer(fbeta_score, beta=0.5)
 
 # TODO: Perform grid search on the classifier using 'scorer' as the scoring method using GridSearchCV()
-grid_obj = None
+grid_obj = GridSearchCV(clf, param_grid=parameters, scoring=scorer)
 
 # TODO: Fit the grid search object to the training data and find the optimal parameters using fit()
-grid_fit = None
+grid_fit = grid_obj.fit(X_train, y_train)
 
 # Get the estimator
 best_clf = grid_fit.best_estimator_
@@ -477,11 +498,10 @@ best_predictions = best_clf.predict(X_test)
 # Report the before-and-afterscores
 print("Unoptimized model\n------")
 print("Accuracy score on testing data: {:.4f}".format(accuracy_score(y_test, predictions)))
-print("F-score on testing data: {:.4f}".format(fbeta_score(y_test, predictions, beta = 0.5)))
+print("F-score on testing data: {:.4f}".format(fbeta_score(y_test, predictions, beta=0.5)))
 print("\nOptimized Model\n------")
 print("Final accuracy score on the testing data: {:.4f}".format(accuracy_score(y_test, best_predictions)))
-print("Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test, best_predictions, beta = 0.5)))
-
+print("Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test, best_predictions, beta=0.5)))
 
 # ### Question 5 - Final Model Evaluation
 # 
@@ -495,8 +515,8 @@ print("Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test, bes
 # 
 # |     Metric     | Unoptimized Model | Optimized Model |
 # | :------------: | :---------------: | :-------------: | 
-# | Accuracy Score |                   |                 |
-# | F-score        |                   |   EXAMPLE       |
+# | Accuracy Score |     0.8576        |   0.8630        |
+# | F-score        |     0.7246        |   0.7356        |
 # 
 
 # **Answer: **
@@ -521,21 +541,21 @@ print("Final F-score on the testing data: {:.4f}".format(fbeta_score(y_test, bes
 #  - Train the supervised model on the entire training set.
 #  - Extract the feature importances using `'.feature_importances_'`.
 
-# In[ ]:
+# In[23]:
 
 
 # TODO: Import a supervised learning model that has 'feature_importances_'
-
+from sklearn.ensemble import AdaBoostClassifier
 
 # TODO: Train the supervised model on the training set using .fit(X_train, y_train)
-model = None
+model = AdaBoostClassifier()
+model.fit(X_train, y_train)
 
 # TODO: Extract the feature importances using .feature_importances_ 
-importances = None
+importances = model.feature_importances_
 
 # Plot
 vs.feature_plot(importances, X_train, y_train)
-
 
 # ### Question 7 - Extracting Feature Importance
 # 
@@ -549,7 +569,7 @@ vs.feature_plot(importances, X_train, y_train)
 # ### Feature Selection
 # How does a model perform if we only use a subset of all the available features in the data? With less features required to train, the expectation is that training and prediction time is much lower — at the cost of performance metrics. From the visualization above, we see that the top five most important features contribute more than half of the importance of **all** features present in the data. This hints that we can attempt to *reduce the feature space* and simplify the information required for the model to learn. The code cell below will use the same optimized model you found earlier, and train it on the same training set *with only the top five important features*. 
 
-# In[ ]:
+# In[24]:
 
 
 # Import functionality for cloning a model
@@ -568,11 +588,10 @@ reduced_predictions = clf.predict(X_test_reduced)
 # Report scores from the final model using both versions of data
 print("Final Model trained on full data\n------")
 print("Accuracy on testing data: {:.4f}".format(accuracy_score(y_test, best_predictions)))
-print("F-score on testing data: {:.4f}".format(fbeta_score(y_test, best_predictions, beta = 0.5)))
+print("F-score on testing data: {:.4f}".format(fbeta_score(y_test, best_predictions, beta=0.5)))
 print("\nFinal Model trained on reduced data\n------")
 print("Accuracy on testing data: {:.4f}".format(accuracy_score(y_test, reduced_predictions)))
-print("F-score on testing data: {:.4f}".format(fbeta_score(y_test, reduced_predictions, beta = 0.5)))
-
+print("F-score on testing data: {:.4f}".format(fbeta_score(y_test, reduced_predictions, beta=0.5)))
 
 # ### Question 8 - Effects of Feature Selection
 # 
