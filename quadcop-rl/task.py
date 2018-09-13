@@ -28,7 +28,14 @@ class Task():
 
     def get_reward(self):
         """Uses current pose of sim to return reward."""
-        reward = 1.-.3*(abs(self.sim.pose[:3] - self.target_pos)).sum()
+        # Euclidian Distance
+        euclid_dist_target = np.sqrt(np.square(self.sim.pose[:3] - self.target_pos).sum())
+        # Error Margin < 15 meters, lower factor discount
+        reward_discount_factor = euclid_dist_target if euclid_dist_target < 15 else 0.0001*euclid_dist_target
+        
+        reward = 1. -reward_discount_factor 
+#         reward = 1.-.3*(abs(self.sim.pose[:3] - self.target_pos)).sum()
+
         return reward
 
     def step(self, rotor_speeds):
