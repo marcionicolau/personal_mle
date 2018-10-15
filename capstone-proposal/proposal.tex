@@ -183,20 +183,25 @@ reward collected over the 50,000 runs for each agent.
     some combinations of Age, Sex, Stature (cm), Actual Weight (kg), Activity level 
     (sedentary, low, medium, intense) which will be used for calories intake goal 
     (Mifflin-St Jeor Equation).
-    \item Root Mean Square Error (RMSE), for calories intake goal and cumulative 
+    \item Mean Absolute Difference (MAD), for calories intake goal and cumulative 
     reward by combination of factors.
 \end{itemize}
 
 \section{Project Design}
 
+For this project implementation I choose to work with Python 3 language and the libraries enumerated below:
+
+\subsection{Libraries}
+
 \begin{itemize}
-    \item Python 3
     \item Scikit-learn
     \item Pandas
     \item Numpy
     \item Keras
     \item Tensorflow
 \end{itemize}
+
+\subsection{Implementation Classes}
 
 The Agent and Environment will be coded as Python Classes alongside with the data from 
 USDA National Nutrient Dataset that will be pre-processed and used for collecting and 
@@ -207,23 +212,67 @@ The information about macronutrients (Protein, Total Fat, Carbohydrate) will be
 used as components for the reward functions with respective penalizations in 
 association with the Calories (Energy) information for each food component.
 
+
 \begin{python}
-	class Game(object):
-	def copy(self):
-	'''Returns a copy of the game'''
-	def getBoard(self):
-	'''Returns the board of the game'''
-	def getCurrentPlayer(self):
-	'''Returns the player whose turn it is'''
-	def getLegalMoves(self):
-	'''Returns a list of legal moves for the player in turn'''
-	def getOutcomes(self):
-	'''Returns the outcome for each player at the end of the game'''
-	def isGameOver(self):
-	'''Returns true if the game is over, false otherwise'''
-	def makeMove(self, move):
-	'''Makes a move for the player whose turn it is'''
+class DQLAgent(object):
+    def __init__(self, states_sz, actions_sz):
+        """ Initialise the Agent """
+
+    def _build_model(self):
+        """ Build Neural Net for Deep-Q-Learning """
+
+    def remember(self, state, action, reward, next_state, done):
+        """ Implement experiece replay dataset """
+
+    def action(self, state):
+        """ Return an action from current state """
+
+    def replay(self, batch_sz):
+        """ learn using replay experiece """
+
+    def load(self, name):
+        """ load weights """
+
+    def save(self, name):
+        """save weights """
+
 \end{python}
+
+The environment will be implemented as an OpenAI gym\footnote{\url{https://gym.openai.com/}} environment.
+
+\begin{python}
+class SIMEnv(object):
+    def __init__(self, proxy_table):
+        """ Initilise the Environment with informations from proxy_table """
+
+    def step(self, action):
+        """ Take a action, calculate the reward and return these informations """
+
+    def reset(self):
+        """ Reset the Environment to the initial state """
+
+    def seed(self, seed=None):
+        """ Define the Environment seed """
+
+    def _take_action(self, action):
+        """ Select all informations from proxy table (Fat, Carbo, Protein, Energy) """
+
+    def _get_reward(self):
+        """ calculate the reward based on nutritional information """
+
+\end{python}
+
+\subsection{Machine Learning Design}
+
+\begin{itemize}
+    \item \textbf{Training experience}: Experience Replay
+    \item \textbf{Target Function}: \(Q^\pi: \mathcal{S} \times \mathcal{A} \to \mathbb{R} \), 
+    where \( \mathcal{S} \) is the states set and \( \mathcal{A} \) is the actions set; 
+    the \( \mathbb{R} \) represents the value of taking a action \( a \in \mathcal{A} \) 
+    beign in a state \( s \in \mathcal{S} \), and following policy \(\pi\).
+    \item \textbf{Learning Function}: Deep Neural Network representation, as an function approximator.
+    \item \textbf{Learning Algorithm}: Q-Learning, a model-free online off-policy algorithm
+\end{itemize}
 
 \bibliographystyle{plainnat}
 \bibliography{bibliography}
