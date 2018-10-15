@@ -1,0 +1,240 @@
+\documentclass{article}
+
+    \usepackage{fullpage}
+    \usepackage{graphicx}
+    \usepackage{color}
+    \usepackage{fancyhdr}
+    \usepackage{url}
+    \usepackage{amsmath,bm}
+    \usepackage{amssymb}
+    \usepackage{amsthm}
+    \usepackage{amsfonts}
+    \usepackage[round]{natbib}
+    \usepackage{enumitem,xcolor}
+    \usepackage[multiple]{footmisc}
+    
+    \usepackage[
+     pdftitle={Udacity Machine Learning Nanodegree: Capstone Proposal},
+     pdfsubject={Machine Learning, Reinforcement Learning, Deep Learning, E-Coach, Food, Meal},
+     pdfauthor={Marcio Nicolau},
+     pdfpagemode=UseOutlines,
+     pdfborder= {0 0 1.0},
+     bookmarks,
+     bookmarksopen,
+     colorlinks=true,
+     citecolor=blue,
+     linkcolor=blue, %
+     linkbordercolor=blue, %
+     urlcolor=blue, %
+    ]{hyperref}
+    
+    \usepackage[labelfont=bf]{caption}
+    \usepackage[utf8]{inputenc}
+    
+    % Default fixed font does not support bold face
+    \DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{8} % for bold
+    \DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{8}  % for normal
+    
+    % Custom colors
+    \usepackage{color}
+    \definecolor{deepblue}{rgb}{0,0,0.5}
+    \definecolor{deepred}{rgb}{0.6,0,0}
+    \definecolor{deepgreen}{rgb}{0,0.5,0}
+    
+    \usepackage{listings}
+    
+    \definecolor{codebg}{RGB}{238,238,238}
+    
+    % Python style for highlighting
+    \newcommand\pythonstyle{\lstset{
+    language=Python,
+    basicstyle=\ttm,
+    otherkeywords={self},             % Add keywords here
+    keywordstyle=\ttb\color{deepblue},
+    emph={MyClass,__init__},          % Custom highlighting
+    emphstyle=\ttb\color{deepred},    % Custom highlighting style
+    stringstyle=\color{deepgreen},
+    frame=tb,                         % Any extra options here
+    framesep=10pt,
+    framexleftmargin=10pt,
+    backgroundcolor=\color{codebg},
+    rulecolor=\color{codebg},
+    aboveskip=15pt,
+    belowskip=15pt,
+    showstringspaces=false            % 
+    }}
+    
+    
+    % Python environment
+    \lstnewenvironment{python}[1][]
+    {
+    \pythonstyle
+    \lstset{#1}
+    }
+    {}
+    
+    % Python for external files
+    \newcommand\pythonexternal[2][]{{
+    \pythonstyle
+    \lstinputlisting[#1]{#2}}}
+    
+    % Python for inline
+    \newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
+    
+    \title{Udacity Machine Learning Nanodegree \\ Capstone Project Proposal}
+    \author{Marcio Nicolau}
+    \date{October 11, 2018}
+    \begin{document}
+\maketitle
+
+\section{Domain Background}
+
+In general, machine learning can be divided into three large areas designated as supervised, 
+unsupervised and reinforcement learning, each one is recommended to solve a specific kind of problem, 
+and for more complex tasks as learning (agent) by interaction (environment) and try to understand how 
+to get the maximum overall reward during this process. Among all supervised learning techniques, one which 
+gains a considerable attention is Deep Learning, that has been responsible for a dramatical improvement 
+of state-of-the-art applications for areas from speech recognition to natural language process. 
+The deep learning approach to reinforcement learning leads to an improvement of the problems complexity 
+that Markov Decision Process (MDP) could solve.
+
+Some of these recent achievements are extensively noticed, like the DeepMind AlphaGo and OpenAI Dota2. 
+A good source of information related to this reinforcement learning context and applications could be 
+found in the Sutton and Barto book ``Reinforcement Learning: An introduction'' (2th Ed., 2017). 
+Alongside the game’s achievements, reinforcement learning is also widely used in the robotics field, 
+to train robots to accomplish tasks without human interaction or domain-specific knowledge.
+
+My personal motivation to work with reinforcement learning is related to better understand the 
+process and application of this area of machine learning to a real-world problem. This is the 
+closest implementation available today and related to the Artificial General Intelligence (AGI) concepts.
+
+\section{Problem Statement}
+
+In general, a person who want to loose weight or pretend to follow a well-defined and health meal plan, 
+certainly well make an appointment with a nutritionist or dietician. This professional works the 
+meals planning a recommendation for this individual, after collect some basic information about 
+routines, food intake habits, goals, sleep pattern, activities (work, gym, etc.) and food 
+preferences and restrictions. This approach works very well and for a long time, but, in some occasions, 
+the person who have been following the meal plan need to make a change or adjust, based on eventual 
+situations and this could cause a problem.
+
+This proposal intends to develop a personal coach (e-coach) that in association with the professional 
+assistance could help anyone to choose a food for a meal, and a deep reinforcement learning system 
+shall suggest the next meal or food composition based on the optimal policy. The training procedure 
+will consider the nominal intake calories daily\footnote{\url{https://www.calculator.net/calorie-calculator.html}}  
+(based on the Mifflin-St Jeor Equation for man [Eq.~\ref{msj-man}] and for woman [Eq.~\ref{msj-woman}]) as the 
+main goal and also, use the macronutrients\footnote{\url{https://www.bodybuilding.com/fun/macronutrients_calculator.htm}}  
+proportion to help this person to have a better food intake behavior.
+
+The value obtained from Eq.~\ref{msj-man} and Eq.~\ref{msj-woman} is the value of the basal metabolic rate (BMR)
+and this is the estimated number of calories a person can consume in a day to maintain their body-weight assuming they 
+remain at rest. This value is multiplied by an activity factor (generally between 1.2 and 1.95).
+
+\begin{eqnarray}
+    BMR = 10 \times weight\mbox{(kg)} + 6.25 \times height\mbox{(cm)} - 5 \times age\mbox{(years)} + 5 \label{msj-man}\\
+    BMR = 10 \times weight\mbox{(kg)} + 6.25 \times height\mbox{(cm)} - 5 \times age\mbox{(years)} -161 \label{msj-woman}
+\end{eqnarray}
+
+For example, for a woman with 60 kg (weight), 168 cm (height), 30-year-old and moderate activity (1.55) the BMR and 
+Total intake calories is:
+
+\begin{itemize}
+    \item BMR = 1,505
+    \item Total Calories = 2,332 / day
+\end{itemize}
+
+\section{Datasets and Inputs}
+
+This project will use a subset from ``USDA National Nutrient Dataset''\footnote{\url{https://ndb.nal.usda.gov/ndb/search/}}
+with nutritional information (Calories, Protein, Total Fat, Carbohydrate, Fiber) 
+for each food item used for the meal planning. Also, the Kaggle Open Food Fact dataset\footnote{\url{https://www.kaggle.com/openfoodfacts/world-food-facts/home}}  
+will be used as complementary source of information to group food based on their 
+nutritional information\footnote{\url{https://www.kaggle.com/lwodarzek/nutrition-table-clustering}}. 
+
+From USDA National Nutrient Dataset, I choosed a subset with these content (SR-Legacy, 2018):
+
+\begin{itemize}
+    \item Dairy and Egg Products
+    \item Fats and Oils
+    \item Soups, Sauces, and Gravies
+    \item Sausages and Luncheon Meats
+    \item Breakfast Cereals
+    \item Fruits and Fruit Juices
+    \item Pork Products
+    \item Vegetables and Vegetable Products
+    \item Nut and Seed Products
+    \item Beef Products
+    \item Legumes and Legume Products
+    \item Baked Products
+    \item Sweets
+    \item Cereal Grains and Pasta
+    \item Fast Foods
+    \item Snacks
+    \item Restaurant Foods
+\end{itemize}
+
+\section{Solution Statement}
+
+A Deep Q-Learning algorithm will be used for generating the optimal policy. The state-action pair 
+will be composed by amount of calories intake by a specific food or meal (Actions). The reward from 
+environment will the sum of calories for a specific day, also an extension could be set the total 
+reward for a hole week instead of only day achievement.
+
+\section{Benchmark Model}
+
+As benchmark, I propose a uniformly random agent and compare both using the average cumulative 
+reward collected over the 50,000 runs for each agent.
+
+\section{Evaluation Metrics}
+
+\begin{itemize}
+    \item Average cumulative reward, for a high number of simulations (e.g. 100,000) for 
+    some combinations of Age, Sex, Stature (cm), Actual Weight (kg), Activity level 
+    (sedentary, low, medium, intense) which will be used for calories intake goal 
+    (Mifflin-St Jeor Equation).
+    \item Root Mean Square Error (RMSE), for calories intake goal and cumulative 
+    reward by combination of factors.
+\end{itemize}
+
+\section{Project Design}
+
+\begin{itemize}
+    \item Python 3
+    \item Scikit-learn
+    \item Pandas
+    \item Numpy
+    \item Keras
+    \item Tensorflow
+\end{itemize}
+
+The Agent and Environment will be coded as Python Classes alongside with the data from 
+USDA National Nutrient Dataset that will be pre-processed and used for collecting and 
+extract nutritional information for each food and accessible for both Agent and 
+Environment as a dictionary. 
+
+The information about macronutrients (Protein, Total Fat, Carbohydrate) will be 
+used as components for the reward functions with respective penalizations in 
+association with the Calories (Energy) information for each food component.
+
+\begin{python}
+	class Game(object):
+	def copy(self):
+	'''Returns a copy of the game'''
+	def getBoard(self):
+	'''Returns the board of the game'''
+	def getCurrentPlayer(self):
+	'''Returns the player whose turn it is'''
+	def getLegalMoves(self):
+	'''Returns a list of legal moves for the player in turn'''
+	def getOutcomes(self):
+	'''Returns the outcome for each player at the end of the game'''
+	def isGameOver(self):
+	'''Returns true if the game is over, false otherwise'''
+	def makeMove(self, move):
+	'''Makes a move for the player whose turn it is'''
+\end{python}
+
+\bibliographystyle{plainnat}
+\bibliography{bibliography}
+
+\end{document}
