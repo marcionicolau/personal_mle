@@ -25,30 +25,32 @@ F_groups = [100, 400, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1600, 1800, 19
 
 fd_group[fd_group.FdGrp_Cd.isin(F_groups)]
 
-# In[25]:
-
-
 food_des[food_des.FdGrp_Cd.isin(F_groups)]
-
-# In[59]:
 
 
 food_des[food_des.FdGrp_Cd.isin(F_groups)].shape
 
-# In[103]:
 
 
 reg_by_grp = pd.DataFrame([{'FdGrp_Cd': f, 'FdGrp_items': food_des[food_des.FdGrp_Cd == f].shape[0]} for f in F_groups])
 flt_grp = fd_group[fd_group.FdGrp_Cd.isin(F_groups)]
 
-# In[105]:
 
 
 sz_by_grp = flt_grp.merge(reg_by_grp, left_on='FdGrp_Cd', right_on='FdGrp_Cd', how='outer')
 
-# In[107]:
 
 
 sz_by_grp
 
-# In[ ]:
+
+# NUTR_DEF
+# Nutr_No = 203 Protein, 204 Fat, 205 Carbohydrate
+
+# NUT_DATA
+# NDB_No, Nutr_No, Nutr_Val
+
+# FOOD_DES
+# NDB_No, FdGrp_Cd, Long_Desc, Shrt_Desc, Pro_Factor, Fat_Factor, CHO_Factor
+
+
