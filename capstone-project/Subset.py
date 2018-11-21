@@ -1,4 +1,3 @@
-
 import helper
 import pandas as pd
 
@@ -27,11 +26,10 @@ nutri_data = pd.read_csv('Dataset/nutritional_usda.csv')
 fill_data = nutri_data.dropna()
 fill_data.to_csv('Dataset/clean_data.csv', index=False)
 
-ddict = fill_data[['Shrt_Desc', 'Pro_Factor_','Fat_Factor_','CHO_Factor','prot_val','fat_val','cho_val','pro_cal','fat_cal','cho_cal']]
+ddict = fill_data[
+    ['Shrt_Desc', 'Pro_Factor_', 'Fat_Factor_', 'CHO_Factor', 'prot_val', 'fat_val', 'cho_val', 'pro_cal', 'fat_cal',
+     'cho_cal']]
 ddict.set_index(keys='Shrt_Desc', inplace=True)
 proxy_data = ddict.to_dict('index')
 
 helper.save_proxy_data(proxy_data)
-
-
-    index=fill_data['Shrt_Desc'])
