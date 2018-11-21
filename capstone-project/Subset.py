@@ -1,4 +1,6 @@
+
 import helper
+import pandas as pd
 
 head_files = {'FD_GROUP.txt': ['FdGrp_Cd', 'FdGrp_desc'],
               'LANGUAL.txt': ["NDB_No", "Factor"],
@@ -19,38 +21,17 @@ head_files = {'FD_GROUP.txt': ['FdGrp_Cd', 'FdGrp_desc'],
 
 base_files = head_files.keys()
 
-all_data = helper.convert_to_csv('SR-Leg_ASC', base_files, head_files, 'DS4')
+all_data = helper.convert_to_csv('SR-Leg_ASC', base_files, head_files, 'Dataset')
 
-F_groups = [100, 400, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1600, 1800, 1900, 2000, 2100, 2500, 3600]
+nutri_data = pd.read_csv('Dataset/nutritional_usda.csv')
+fill_data = nutri_data.dropna()
+fill_data.to_csv('Dataset/clean_data.csv', index=False)
 
-fd_group[fd_group.FdGrp_Cd.isin(F_groups)]
+ddict = fill_data[['Shrt_Desc', 'Pro_Factor_','Fat_Factor_','CHO_Factor','prot_val','fat_val','cho_val','pro_cal','fat_cal','cho_cal']]
+ddict.set_index(keys='Shrt_Desc', inplace=True)
+proxy_data = ddict.to_dict('index')
 
-food_des[food_des.FdGrp_Cd.isin(F_groups)]
-
-
-food_des[food_des.FdGrp_Cd.isin(F_groups)].shape
-
-
-
-reg_by_grp = pd.DataFrame([{'FdGrp_Cd': f, 'FdGrp_items': food_des[food_des.FdGrp_Cd == f].shape[0]} for f in F_groups])
-flt_grp = fd_group[fd_group.FdGrp_Cd.isin(F_groups)]
+helper.save_proxy_data(proxy_data)
 
 
-
-sz_by_grp = flt_grp.merge(reg_by_grp, left_on='FdGrp_Cd', right_on='FdGrp_Cd', how='outer')
-
-
-
-sz_by_grp
-
-
-# NUTR_DEF
-# Nutr_No = 203 Protein, 204 Fat, 205 Carbohydrate
-
-# NUT_DATA
-# NDB_No, Nutr_No, Nutr_Val
-
-# FOOD_DES
-# NDB_No, FdGrp_Cd, Long_Desc, Shrt_Desc, Pro_Factor, Fat_Factor, CHO_Factor
-
-
+    index=fill_data['Shrt_Desc'])

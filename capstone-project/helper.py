@@ -23,3 +23,15 @@ def convert_to_csv(input_path, files, names, output_path='Datasets'):
         temp.to_csv(to_f, index=False)
 
     return ds
+
+
+def save_proxy_data(dic):
+    f = open('proxy_data.txt','w')
+    f.write(str(dic))
+    f.close()
+
+def load_proxy_data():
+    f = open('proxy_data.txt','r')
+    data=f.read()
+    f.close()
+    return eval(data)
